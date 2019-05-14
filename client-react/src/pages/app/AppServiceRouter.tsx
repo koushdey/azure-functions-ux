@@ -11,6 +11,7 @@ export interface AppSeriviceRouterProps {
 const AppSettingsLoadable: any = lazy(() => import(/* webpackChunkName:"appsettings" */ './app-settings/AppSettings'));
 const LogStreamLoadable: any = lazy(() => import(/* webpackChunkName:"logstream" */ './log-stream/LogStreamDataLoader'));
 const ChangeAppPlanLoadable: any = lazy(() => import(/* webpackChunkName:"changeappplan" */ './change-app-plan/ChangeAppPlanDataLoader'));
+const FunctionsListLoadable: any = lazy(() => import(/* webpackChunkName:"changeappplan" */ './functions-list/FunctionsListDataLoader'));
 
 const AppServiceRouter: React.FC<RouteComponentProps<AppSeriviceRouterProps>> = props => {
   const [resourceId, setResourceId] = useState('');
@@ -33,6 +34,7 @@ const AppServiceRouter: React.FC<RouteComponentProps<AppSeriviceRouterProps>> = 
                 <AppSettingsLoadable resourceId={resourceId} path="/settings" />
                 <LogStreamLoadable resourceId={resourceId} path="/log-stream" />
                 <ChangeAppPlanLoadable resourceId={resourceId} path="/changeappplan" />
+                <FunctionsListLoadable resourceId={resourceId} path="/functionslist" />
               </Router>
             )
           );
