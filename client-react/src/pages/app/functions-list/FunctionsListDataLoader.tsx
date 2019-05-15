@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArmObj, Site, ArmArray } from '../../../models/WebAppModels';
+import { ArmObj, Site } from '../../../models/WebAppModels';
 import SiteService from '../../../ApiHelpers/SiteService';
 import LogService from '../../../utils/LogService';
 import LoadingComponent from '../../../components/loading/loading-component';
@@ -14,33 +14,28 @@ export interface FunctionsListDataLoaderProps {
 
 const FunctionsListDataLoader: React.SFC<FunctionsListDataLoaderProps> = props => {
   const [site, setSite] = useState<ArmObj<Site> | null>(null);
-  const [functions, setFunctions] = useState<ArmArray<FunctionInfo> | null>(null);
+  const [functions, setFunctions] = useState<ArmObj<FunctionInfo>[] | null>(null);
   const [initializeData, setInitializeData] = useState(true);
 
   const resourceId = props.resourceId;
   let siteResponse: HttpResponseObject<ArmObj<Site>>;
-  let functionsResponse: HttpResponseObject<ArmArray<FunctionInfo>>;
+  let functionsResult: ArmObj<FunctionInfo>[];
 
   const fetchData = async () => {
     if (initializeData) {
       await Promise.all([SiteService.fetchSite(resourceId), FunctionService.fetchFunctions(resourceId)]).then(responses => {
         siteResponse = responses[0];
-        functionsResponse = responses[1];
+        functionsResult = responses[1];
 
         if (!siteResponse.metadata.success) {
           LogService.error('/FunctionsList', 'fetchSiteFailed', `Failed to get site with id ${siteResponse.data.id}`);
-        } else if (!functionsResponse.metadata.success) {
-          LogService.error(
-            '/FunctionsList',
-            'fetchFunctionsFailed',
-            `Failed to get functions from site with id ${functionsResponse.data.id}`
-          );
-        } else {
-          setSite(siteResponse.data);
-          setFunctions(functionsResponse.data);
-
-          setInitializeData(false);
+          return;
         }
+
+        setSite(siteResponse.data);
+        setFunctions(functionsResult);
+
+        setInitializeData(false);
       });
     }
   };
@@ -57,7 +52,7 @@ const FunctionsListDataLoader: React.SFC<FunctionsListDataLoaderProps> = props =
     return <LoadingComponent />;
   }
 
-  return <FunctionsList site={site as ArmObj<Site>} functions={functions as ArmArray<FunctionInfo>} refresh={refresh} />;
+  return <FunctionsList site={site as ArmObj<Site>} functions={functions as ArmObj<FunctionInfo>[]} refresh={refresh} />;
 };
 
 export default FunctionsListDataLoader;

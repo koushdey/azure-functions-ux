@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { ArmObj, Site, ArmArray } from '../../../models/WebAppModels';
+import { ArmObj, Site } from '../../../models/WebAppModels';
 import { PortalContext } from '../../../PortalContext';
 import { FunctionInfo } from '../../../models/function-model';
 import { FunctionsListCommandBar } from './FunctionsListCommandBar';
@@ -7,7 +7,7 @@ import FunctionsListContainer from './FunctionsListContainer';
 
 export interface FunctionsListProps {
   site: ArmObj<Site>;
-  functions: ArmArray<FunctionInfo>;
+  functions: ArmObj<FunctionInfo>[];
   refresh: () => void;
 }
 
