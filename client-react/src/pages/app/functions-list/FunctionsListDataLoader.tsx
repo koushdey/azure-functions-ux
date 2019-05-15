@@ -57,11 +57,7 @@ const FunctionsListDataLoader: React.SFC<FunctionsListDataLoaderProps> = props =
     return <LoadingComponent />;
   }
 
-  return (
-    <div style={{ padding: '30px' }}>
-      <FunctionsList site={site as ArmObj<Site>} functions={functions as ArmArray<FunctionInfo>} onFunctionsUpdated={refresh} />
-    </div>
-  );
+  return <FunctionsList site={site as ArmObj<Site>} functions={functions as ArmArray<FunctionInfo>} refresh={refresh} />;
 };
 
 export default FunctionsListDataLoader;

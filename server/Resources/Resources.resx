@@ -4959,4 +4959,19 @@ Set to "External URL" to use an API definition that is hosted elsewhere.</value>
   <data name="planName" xml:space="preserve">
     <value>Plan name</value>
   </data>
+  <data name="FunctionsList_CommandBar_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="FunctionsList_CommandBar_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="FunctionsList_CommandBar_Enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="FunctionsList_CommandBar_Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="FunctionsList_CommandBar_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

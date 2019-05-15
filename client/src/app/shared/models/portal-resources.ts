@@ -1596,4 +1596,9 @@ export class PortalResources {
   public static resourceGroupDescription = 'resourceGroupDescription';
   public static createNewPlan = 'createNewPlan';
   public static planName = 'planName';
+  public static FunctionsList_CommandBar_Add = 'FunctionsList_CommandBar_Add';
+  public static FunctionsList_CommandBar_Refresh = 'FunctionsList_CommandBar_Refresh';
+  public static FunctionsList_CommandBar_Enable = 'FunctionsList_CommandBar_Enable';
+  public static FunctionsList_CommandBar_Disable = 'FunctionsList_CommandBar_Disable';
+  public static FunctionsList_CommandBar_Delete = 'FunctionsList_CommandBar_Delete';
 }

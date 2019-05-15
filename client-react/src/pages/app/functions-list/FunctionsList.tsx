@@ -2,20 +2,27 @@ import React, { useContext, useEffect } from 'react';
 import { ArmObj, Site, ArmArray } from '../../../models/WebAppModels';
 import { PortalContext } from '../../../PortalContext';
 import { FunctionInfo } from '../../../models/function-model';
+import { FunctionsListCommandBar } from './FunctionsListCommandBar';
+import FunctionsListContainer from './FunctionsListContainer';
 
 export interface FunctionsListProps {
   site: ArmObj<Site>;
   functions: ArmArray<FunctionInfo>;
-  onFunctionsUpdated: () => void;
+  refresh: () => void;
 }
 
 const FunctionsList: React.SFC<FunctionsListProps> = props => {
-  const {} = props;
+  const { functions, refresh } = props;
   const portalCommunicator = useContext(PortalContext);
   useEffect(() => {
     portalCommunicator.loadComplete();
   }, []);
-  return <h1>Hello function list again!</h1>;
+  return (
+    <>
+      <FunctionsListCommandBar refresh={refresh} />
+      <FunctionsListContainer functions={functions} />
+    </>
+  );
 };
 
 export default FunctionsList;
