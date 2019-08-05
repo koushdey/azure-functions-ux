@@ -14,6 +14,7 @@ import { WizardModule } from 'app/controls/form-wizard/wizard.module';
 import { ConfigureDropboxComponent } from './deployment-center-setup/step-configure/configure-dropbox/configure-dropbox.component';
 import { ConfigureOnedriveComponent } from './deployment-center-setup/step-configure/configure-onedrive/configure-onedrive.component';
 import { ConfigureGithubComponent } from './deployment-center-setup/step-configure/configure-github/configure-github.component';
+import { ConfigureGithubActionsComponent } from './deployment-center-setup/step-configure/configure-github-actions/configure-github-actions.component';
 import { ConfigureVstsSourceComponent } from './deployment-center-setup/step-configure/configure-vsts-source/configure-vsts-source.component';
 import { ConfigureVstsBuildComponent } from './deployment-center-setup/step-configure/configure-vsts-build/configure-vsts-build.component';
 import { ConfigureExternalComponent } from './deployment-center-setup/step-configure/configure-external/configure-external.component';
@@ -43,6 +44,7 @@ import { FunctionsFramworksComponent } from './deployment-center-setup/step-conf
     ConfigureDropboxComponent,
     ConfigureOnedriveComponent,
     ConfigureGithubComponent,
+    ConfigureGithubActionsComponent,
     ConfigureVstsSourceComponent,
     ConfigureVstsBuildComponent,
     ConfigureExternalComponent,
