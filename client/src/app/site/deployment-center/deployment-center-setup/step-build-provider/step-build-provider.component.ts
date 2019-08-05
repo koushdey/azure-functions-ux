@@ -32,8 +32,19 @@ export class StepBuildProviderComponent implements OnDestroy {
       color: '#2B79DA',
       description: this._translateService.instant(PortalResources.vstsBuildServerDesc),
       authorizedStatus: 'none',
-      enabled: false,
+      enabled: true,
       scenarioId: ScenarioIds.vstsDeploymentPermission,
+    },
+    {
+      id: 'github',
+      name: 'GitHub Actions',
+      icon: 'image/deployment-center/GitHubLogo.svg',
+      color: '#2B79DA',
+      description: 'Use GitHub Actions to setup your build and deploymnet pipelines',
+      authorizedStatus: 'none',
+      enabled: true,
+      scenarioId: ScenarioIds.vstsDeploymentPermission,
+      hidden: false,
     },
   ];
 
