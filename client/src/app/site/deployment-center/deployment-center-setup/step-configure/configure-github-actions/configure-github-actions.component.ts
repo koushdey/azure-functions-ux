@@ -14,9 +14,13 @@ import { ResponseHeader } from 'app/shared/Utilities/response-header';
 import { GithubService } from '../../wizard-logic/github.service';
 
 @Component({
-  selector: 'app-configure-github',
-  templateUrl: './configure-github.component.html',
-  styleUrls: ['./configure-github.component.scss', '../step-configure.component.scss', '../../deployment-center-setup.component.scss'],
+  selector: 'app-configure-github-actions',
+  templateUrl: './configure-github-actions.component.html',
+  styleUrls: [
+    './configure-github-actions.component.scss',
+    '../step-configure.component.scss',
+    '../../deployment-center-setup.component.scss',
+  ],
 })
 export class ConfigureGithubActionsComponent implements OnDestroy {
   private reposStream = new ReplaySubject<string>();

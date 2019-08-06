@@ -284,4 +284,51 @@ export class StepCompleteComponent {
       items: returnSummaryItems,
     };
   }
+
+  get GithubActionsWorkflowConfig() {
+    return this.wizard.wizardValues.buildSettings.applicationFramework === 'Node'
+      ? this._getNodeGithubActionsWorkflowConfig(this.wizard.siteArm.name)
+      : this._getDefaultGithubActionsWorkflowConfig(this.wizard.siteArm.name);
+  }
+
+  private _getNodeGithubActionsWorkflowConfig(appName: string) {
+    return btoa(`on: push
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    # checkout the repo
+    - uses: actions/checkout@master
+
+    # install dependencies, build, and test
+    - name: npm install, build, and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+
+    # deploy web app using publish profile credentials
+    - uses: azure/appservice-actions/webapp@master
+      with:
+        app-name: ${appName}
+        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`);
+  }
+
+  private _getDefaultGithubActionsWorkflowConfig(appName: string) {
+    return btoa(`on: push
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    # checkout the repo
+    - uses: actions/checkout@master
+
+    # deploy web app using publish profile credentials
+    - uses: azure/appservice-actions/webapp@master
+      with:
+        app-name: ${appName}
+        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`);
+  }
 }

@@ -1,13 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { UserService } from 'app/shared/services/user.service';
 import { Subject } from 'rxjs/Subject';
-import { Http } from '@angular/http';
-import { Headers } from '@angular/http';
-import { AuthoricatedUserContext, DevOpsAccount, DevOpsList, DevOpsProject } from './azure-devops-service-models';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { uniqBy } from 'lodash-es';
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
 import { Constants, DeploymentCenterConstants } from 'app/shared/models/constants';
 import { DeploymentCenterStateManager } from './deployment-center-state-manager';
 import { CacheService } from 'app/shared/services/cache.service';
