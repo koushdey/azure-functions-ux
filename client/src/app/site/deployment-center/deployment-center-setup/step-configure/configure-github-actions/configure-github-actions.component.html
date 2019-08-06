@@ -1,6 +1,10 @@
 <div class="settings-group-wrapper" [formGroup]="wizard?.sourceSettings" novalidate>
+    <h3 class="first-config-heading">Application Framework</h3>
+    <app-linux-frameworks *ngIf="wizard.isLinuxApp && !wizard.isFunctionApp" ></app-linux-frameworks>
+    <app-windows-frameworks *ngIf="!wizard.isLinuxApp && !wizard.isFunctionApp" ></app-windows-frameworks>
+
     <h3 class="first-config-heading">{{ 'code' | translate }}</h3>
-  
+
     <div class="settings-wrapper">
       <div class="setting-wrapper">
         <label class="setting-label" id="dc-github-org-label">{{ 'organization' | translate }}</label>
@@ -20,7 +24,7 @@
           </ng-select>
         </div>
       </div>
-  
+
       <div class="setting-wrapper">
         <label class="setting-label" id="dc-github-repo-label">{{ 'repository' | translate }}</label>
         <div class="setting-control-container">
@@ -42,7 +46,7 @@
           <div invalidmessage="repoUrl" id="dc-github-repo-error" role="alert"></div>
         </div>
       </div>
-  
+
       <div class="setting-wrapper">
         <label class="setting-label" id="dc-github-branch-label">{{ 'branch' | translate }}</label>
         <div class="setting-control-container">
@@ -71,4 +75,3 @@
       </div>
     </div>
   </div>
-  

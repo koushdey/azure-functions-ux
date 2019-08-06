@@ -6,10 +6,12 @@
       <span class="summary-value">{{item.value}}</span>
     </div>
   </div>
-
-  <div *ngIf="wizard.wizardValues.sourceProvider === 'github' && wizard.wizardValues.buildProvider === 'github'" class="summary-group">
+</div>
+<div *ngIf="wizard.wizardValues.sourceProvider === 'github' && wizard.wizardValues.buildProvider === 'github'" class="summary-wrapper">
+  <div class="summary-group">
     <h3 class="heading">Github Actions Workflow Configuration</h3>
     <pre>{{GithubActionsWorkflowConfig}}</pre>
+    <br/><br/>
   </div>
 </div>
 <div class="footer">
