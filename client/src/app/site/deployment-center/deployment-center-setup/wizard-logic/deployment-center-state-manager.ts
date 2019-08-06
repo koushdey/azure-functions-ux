@@ -39,7 +39,7 @@ import { VSOAccount } from '../../Models/vso-repo';
 import { AzureDevOpsService } from './azure-devops.service';
 import { LocalStorageService } from '../../../../shared/services/local-storage.service';
 import { GithubService } from './github.service';
-import { WorkflowCommit } from '../../Models/github';
+import { WorkflowCommit, FileContent } from '../../Models/github';
 
 const CreateAadAppPermissionStorageKey = 'DeploymentCenterSessionCanCreateAadApp';
 @Injectable()
@@ -155,17 +155,31 @@ export class DeploymentCenterStateManager implements OnDestroy {
         name: 'Azure App Service',
         email: 'antareseee@microsoft.com',
       },
+      branch,
     };
 
-    return this._githubService.commitWorkflowConfiguration(repo, branch, commitInfo).switchMap(response => {
-      return this._cacheService
-        .patchArm(`${this._resourceId}/config/web`, ARMApiVersions.websiteApiVersion20181101, {
-          properties: {
-            scmType: 'GithubActions',
-          },
-        })
-        .map(r => r.json());
-    });
+    return this._githubService
+      .fetchWorkflowConfiguration(this.getToken(), this.wizardValues.sourceSettings.repoUrl, repo, branch)
+      .switchMap(fileContentResponse => {
+        if (fileContentResponse && fileContentResponse.status === 200) {
+          const fileContent = <FileContent>fileContentResponse.json();
+          commitInfo.sha = fileContent.sha;
+        }
+
+        return this._githubService.commitWorkflowConfiguration(this.getToken(), repo, commitInfo).switchMap(response => {
+          return this._cacheService
+            .patchArm(`${this._resourceId}/config/web`, ARMApiVersions.websiteApiVersion20181101, {
+              properties: {
+                scmType: 'GithubActions',
+              },
+            })
+            .map(r => ({
+              status: 'succeeded',
+              statusMessage: '',
+              result: r,
+            }));
+        });
+      });
   }
 
   private _deployKudu() {

@@ -3,6 +3,7 @@ export class FileContent {
   type: string;
   contents: string;
   encoding: string;
+  sha: string;
 }
 
 export class WorkflowCommitter {
@@ -14,4 +15,6 @@ export class WorkflowCommit {
   message: string;
   committer: WorkflowCommitter;
   content: string;
+  branch: string;
+  sha?: string;
 }

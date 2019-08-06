@@ -1,86 +1,91 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Constants, DeploymentCenterConstants } from 'app/shared/models/constants';
-import { DeploymentCenterStateManager } from './deployment-center-state-manager';
 import { CacheService } from 'app/shared/services/cache.service';
 import { Guid } from 'app/shared/Utilities/Guid';
+import { Observable } from 'rxjs';
+import { Response } from '@angular/http';
 
 @Injectable()
 export class GithubService implements OnDestroy {
   private _ngUnsubscribe$ = new Subject();
   private _workflowYmlPath = '.github/workflows/appsvc-portal.yml';
 
-  constructor(private _wizard: DeploymentCenterStateManager, private _cacheService: CacheService) {}
+  constructor(private _cacheService: CacheService) {}
 
   ngOnDestroy(): void {
     this._ngUnsubscribe$.next();
   }
 
-  fetchOrgs() {
+  fetchOrgs(authToken: string) {
     return this._cacheService.post(Constants.serviceHost + 'api/github/passthrough?orgs=', true, null, {
       url: `${DeploymentCenterConstants.githubApiUrl}/user/orgs`,
-      authToken: this._wizard.getToken(),
+      authToken,
     });
   }
 
-  fetchUser() {
+  fetchUser(authToken: string) {
     return this._cacheService.post(Constants.serviceHost + 'api/github/passthrough?user=', true, null, {
       url: `${DeploymentCenterConstants.githubApiUrl}/user`,
-      authToken: this._wizard.getToken(),
+      authToken,
     });
   }
 
-  fetchUserRepos(org: string, page?: number) {
+  fetchUserRepos(authToken: string, org: string, page?: number) {
     const url = page
       ? `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner&page=${page}`
       : `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner`;
 
     return this._cacheService.post(Constants.serviceHost + `api/github/passthrough?repo=${org}&t=${Guid.newTinyGuid()}`, true, null, {
       url,
-      authToken: this._wizard.getToken(),
+      authToken,
     });
   }
 
-  fetchOrgRepos(org: string, page?: number) {
+  fetchOrgRepos(authToken: string, org: string, page?: number) {
     const url = page ? `${org}/repos?per_page=100&page=${page}` : `${org}/repos?per_page=100`;
 
     return this._cacheService.post(Constants.serviceHost + `api/github/passthrough?repo=${org}&t=${Guid.newTinyGuid()}`, true, null, {
       url,
-      authToken: this._wizard.getToken(),
+      authToken,
     });
   }
 
-  fetchBranches(repoUrl: string, repoName: string, page?: number) {
+  fetchBranches(authToken: string, repoUrl: string, repoName: string, page?: number) {
     const url = page
       ? `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/branches?per_page=100&page=${page}`
       : `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/branches?per_page=100`;
 
     return this._cacheService.post(Constants.serviceHost + `api/github/passthrough?branch=${repoUrl}&t=${Guid.newTinyGuid()}`, true, null, {
       url,
-      authToken: this._wizard.getToken(),
+      authToken,
     });
   }
 
-  fetchWorkflowConfiguration(repoUrl: string, repoName: string, branchName: string) {
+  fetchWorkflowConfiguration(authToken: string, repoUrl: string, repoName: string, branchName: string): Observable<Response> {
     const url = `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/contents/${this._workflowYmlPath}?ref=${branchName}`;
 
-    return this._cacheService.post(
-      Constants.serviceHost + `api/github/passthrough?branch=${repoUrl}/contents/${this._workflowYmlPath}&t=${Guid.newTinyGuid()}`,
-      true,
-      null,
-      {
-        url,
-        authToken: this._wizard.getToken(),
-      }
-    );
+    return this._cacheService
+      .post(
+        Constants.serviceHost + `api/github/passthrough?branch=${repoUrl}/contents/${this._workflowYmlPath}&t=${Guid.newTinyGuid()}`,
+        true,
+        null,
+        {
+          url,
+          authToken,
+        }
+      )
+      .map(r => r.json())
+      .catch(e => Observable.of(null));
   }
 
-  commitWorkflowConfiguration(repoName: string, branchName: string, content: any) {
-    const url = `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/contents/${this._workflowYmlPath}?ref=${branchName}`;
+  commitWorkflowConfiguration(authToken: string, repoName: string, content: any) {
+    const url = `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/contents/${this._workflowYmlPath}`;
 
     return this._cacheService.put(Constants.serviceHost + `api/github/workflowAction`, null, {
       url,
       content,
+      authToken,
     });
   }
 }

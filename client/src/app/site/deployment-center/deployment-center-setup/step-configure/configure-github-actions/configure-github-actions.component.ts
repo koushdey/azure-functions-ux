@@ -69,10 +69,14 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
   }
 
   fetchOrgs() {
-    return Observable.zip(this._githubService.fetchOrgs(), this._githubService.fetchUser(), (orgs, user) => ({
-      orgs: orgs.json(),
-      user: user.json(),
-    })).subscribe(r => {
+    return Observable.zip(
+      this._githubService.fetchOrgs(this.wizard.getToken()),
+      this._githubService.fetchUser(this.wizard.getToken()),
+      (orgs, user) => ({
+        orgs: orgs.json(),
+        user: user.json(),
+      })
+    ).subscribe(r => {
       const newOrgsList: DropDownElement<string>[] = [];
       newOrgsList.push({
         displayLabel: r.user.login,
@@ -115,7 +119,7 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
     if (repo) {
       this.BranchList = [];
       this._githubService
-        .fetchBranches(repo, this.repoUrlToNameMap[repo])
+        .fetchBranches(this.wizard.getToken(), repo, this.repoUrlToNameMap[repo])
         .switchMap(r => {
           const linkHeader = r.headers.toJSON().link;
           const pageCalls: Observable<any>[] = [Observable.of(r)];
@@ -123,7 +127,7 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
             const links = ResponseHeader.getLinksFromLinkHeader(linkHeader);
             const lastPageNumber = this._getLastPage(links);
             for (let i = 2; i <= lastPageNumber; i++) {
-              pageCalls.push(this._githubService.fetchBranches(repo, this.repoUrlToNameMap[repo], i));
+              pageCalls.push(this._githubService.fetchBranches(this.wizard.getToken(), repo, this.repoUrlToNameMap[repo], i));
             }
           }
           return Observable.forkJoin(pageCalls);
@@ -199,14 +203,14 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
   }
 
   private _fetchUserRepos(org: string) {
-    return this._githubService.fetchUserRepos(org).switchMap(r => {
+    return this._githubService.fetchUserRepos(this.wizard.getToken(), org).switchMap(r => {
       const linkHeader = r.headers.toJSON().link;
       const pageCalls: Observable<any>[] = [Observable.of(r)];
       if (linkHeader) {
         const links = ResponseHeader.getLinksFromLinkHeader(linkHeader);
         const lastPageNumber = this._getLastPage(links);
         for (let i = 2; i <= lastPageNumber; i++) {
-          pageCalls.push(this._githubService.fetchUserRepos(org, i));
+          pageCalls.push(this._githubService.fetchUserRepos(this.wizard.getToken(), org, i));
         }
       }
       return Observable.forkJoin(pageCalls);
@@ -214,14 +218,14 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
   }
 
   private _fetchOrgRepos(org: string) {
-    return this._githubService.fetchOrgRepos(org).switchMap(r => {
+    return this._githubService.fetchOrgRepos(this.wizard.getToken(), org).switchMap(r => {
       const linkHeader = r.headers.toJSON().link;
       const pageCalls: Observable<any>[] = [Observable.of(r)];
       if (linkHeader) {
         const links = ResponseHeader.getLinksFromLinkHeader(linkHeader);
         const lastPageNumber = this._getLastPage(links);
         for (let i = 2; i <= lastPageNumber; i++) {
-          pageCalls.push(this._githubService.fetchOrgRepos(org, i));
+          pageCalls.push(this._githubService.fetchOrgRepos(this.wizard.getToken(), org, i));
         }
       }
       return Observable.forkJoin(pageCalls);
