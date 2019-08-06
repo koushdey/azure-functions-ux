@@ -100,7 +100,7 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
       fetchListCall = org.toLocaleLowerCase().indexOf('github.com/users/') > -1 ? this._fetchUserRepos(org) : this._fetchOrgRepos(org);
 
       fetchListCall
-        .map(r => this._flattenResponses(r))
+        .switchMap(r => this._flattenResponses(r))
         .subscribe(
           r => this._loadRepositories(r),
           err => {
@@ -195,7 +195,7 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
     responses.forEach(e => {
       ret = ret.concat(e.json());
     });
-    return ret;
+    return Observable.of(ret);
   }
 
   private _fetchUserRepos(org: string) {

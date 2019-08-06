@@ -292,7 +292,8 @@ export class StepCompleteComponent {
   }
 
   private _getNodeGithubActionsWorkflowConfig(appName: string) {
-    return btoa(`on: push
+    return `# .github/workflows/appsvc-portal.yml
+on: push
 
 jobs:
   build-and-deploy:
@@ -312,11 +313,12 @@ jobs:
     - uses: azure/appservice-actions/webapp@master
       with:
         app-name: ${appName}
-        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`);
+        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`;
   }
 
   private _getDefaultGithubActionsWorkflowConfig(appName: string) {
-    return btoa(`on: push
+    return `# .github/workflows/appsvc-portal.yml
+on: push
 
 jobs:
   build-and-deploy:
@@ -329,6 +331,6 @@ jobs:
     - uses: azure/appservice-actions/webapp@master
       with:
         app-name: ${appName}
-        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`);
+        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`;
   }
 }
