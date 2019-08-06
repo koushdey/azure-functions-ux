@@ -161,23 +161,42 @@ export class DeploymentCenterStateManager implements OnDestroy {
     return this._githubService
       .fetchWorkflowConfiguration(this.getToken(), this.wizardValues.sourceSettings.repoUrl, repo, branch)
       .switchMap(fileContentResponse => {
-        if (fileContentResponse && fileContentResponse.status === 200) {
-          const fileContent = <FileContent>fileContentResponse.json();
-          commitInfo.sha = fileContent.sha;
+        if (fileContentResponse) {
+          commitInfo.sha = fileContentResponse.sha;
         }
 
         return this._githubService.commitWorkflowConfiguration(this.getToken(), repo, commitInfo).switchMap(response => {
-          return this._cacheService
-            .patchArm(`${this._resourceId}/config/web`, ARMApiVersions.websiteApiVersion20181101, {
-              properties: {
-                scmType: 'GithubActions',
-              },
-            })
-            .map(r => ({
+          return Observable.zip(this._updateScmType(), this._updateActionsMetadata()).map(tuple => {
+            return {
               status: 'succeeded',
               statusMessage: '',
-              result: r,
-            }));
+              result: tuple,
+            };
+          });
+        });
+      });
+  }
+
+  private _updateScmType() {
+    return this._cacheService.patchArm(`${this._resourceId}/config/web`, ARMApiVersions.websiteApiVersion20181101, {
+      properties: {
+        scmType: 'GithubActions',
+      },
+    });
+  }
+
+  private _updateActionsMetadata() {
+    return this._cacheService
+      .postArm(`${this._resourceId}/config/metadata/list`, true, ARMApiVersions.websiteApiVersion20181101)
+      .switchMap(r => {
+        const response = r.json();
+        const metadataProperties = response.properties;
+        metadataProperties['GithubActionSettingsRepoUrl'] = this.wizardValues.sourceSettings.repoUrl;
+        metadataProperties['GithubActionSettingsBranch'] = this.wizardValues.sourceSettings.branch;
+        metadataProperties['GithubActionSettingsConfigPath'] = '.github/workflows/appsvc-portal.yml';
+
+        return this._cacheService.putArm(`${this._resourceId}/config/metadata`, ARMApiVersions.websiteApiVersion20181101, {
+          properties: metadataProperties,
         });
       });
   }

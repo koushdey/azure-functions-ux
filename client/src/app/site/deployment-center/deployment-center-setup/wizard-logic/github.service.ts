@@ -5,6 +5,7 @@ import { CacheService } from 'app/shared/services/cache.service';
 import { Guid } from 'app/shared/Utilities/Guid';
 import { Observable } from 'rxjs';
 import { Response } from '@angular/http';
+import { FileContent } from '../../Models/github';
 
 @Injectable()
 export class GithubService implements OnDestroy {
@@ -62,7 +63,7 @@ export class GithubService implements OnDestroy {
     });
   }
 
-  fetchWorkflowConfiguration(authToken: string, repoUrl: string, repoName: string, branchName: string): Observable<Response> {
+  fetchWorkflowConfiguration(authToken: string, repoUrl: string, repoName: string, branchName: string): Observable<FileContent> {
     const url = `${DeploymentCenterConstants.githubApiUrl}/repos/${repoName}/contents/${this._workflowYmlPath}?ref=${branchName}`;
 
     return this._cacheService
