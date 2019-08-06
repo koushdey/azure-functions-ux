@@ -3,6 +3,7 @@ export class WizardForm {
   public buildProvider: sourceControlProvider;
   public sourceSettings: SourceSettings;
   public buildSettings: VstsBuildSettings;
+  public githubActionsConfigContent: string;
 }
 
 export class VstsBuildSettings {

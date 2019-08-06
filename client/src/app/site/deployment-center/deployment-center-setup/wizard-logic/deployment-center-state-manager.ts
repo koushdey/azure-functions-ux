@@ -38,6 +38,8 @@ import { ScenarioService } from '../../../../shared/services/scenario/scenario.s
 import { VSOAccount } from '../../Models/vso-repo';
 import { AzureDevOpsService } from './azure-devops.service';
 import { LocalStorageService } from '../../../../shared/services/local-storage.service';
+import { GithubService } from './github.service';
+import { WorkflowCommit } from '../../Models/github';
 
 const CreateAadAppPermissionStorageKey = 'DeploymentCenterSessionCanCreateAadApp';
 @Injectable()
@@ -70,6 +72,7 @@ export class DeploymentCenterStateManager implements OnDestroy {
     private _translateService: TranslateService,
     private _localStorageService: LocalStorageService,
     private _portalService: PortalService,
+    private _githubService: GithubService,
     siteService: SiteService,
     userService: UserService,
     scenarioService: ScenarioService
@@ -125,6 +128,8 @@ export class DeploymentCenterStateManager implements OnDestroy {
     switch (this.wizardValues.buildProvider) {
       case 'vsts':
         return this._deployVsts();
+      case 'github':
+        return this._deployGithubActions();
       default:
         return this._deployKudu().map(result => ({ status: 'succeeded', statusMessage: null, result }));
     }
@@ -137,6 +142,29 @@ export class DeploymentCenterStateManager implements OnDestroy {
       return this._cacheService.post(DeploymentCenterConstants.vstsProfileUri, true, this.getVstsDirectHeaders(false)).switchMap(() => {
         return this._cacheService.get(DeploymentCenterConstants.vstsProfileUri, true, this.getVstsDirectHeaders(false));
       });
+    });
+  }
+
+  private _deployGithubActions() {
+    const repo = this.wizardValues.sourceSettings.repoUrl.replace('https://github.com/', '');
+    const branch = this.wizardValues.sourceSettings.branch || 'master';
+    const commitInfo: WorkflowCommit = {
+      message: 'Add or update the workflow configuration from Azure Portal.',
+      content: this.wizardValues.githubActionsConfigContent,
+      committer: {
+        name: 'Azure App Service',
+        email: 'antareseee@microsoft.com',
+      },
+    };
+
+    return this._githubService.commitWorkflowConfiguration(repo, branch, commitInfo).switchMap(response => {
+      return this._cacheService
+        .patchArm(`${this._resourceId}/config/web`, ARMApiVersions.websiteApiVersion20181101, {
+          properties: {
+            scmType: 'GithubActions',
+          },
+        })
+        .map(r => r.json());
     });
   }
 

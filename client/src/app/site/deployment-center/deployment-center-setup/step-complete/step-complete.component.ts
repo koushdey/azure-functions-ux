@@ -66,6 +66,15 @@ export class StepCompleteComponent {
       sourceProvider: this.wizard.wizardValues.sourceProvider,
     });
     this._busyManager.setBusy();
+
+    if (this.wizard.wizardValues.sourceProvider === 'github' && this.wizard.wizardValues.buildProvider === 'github') {
+      this._saveGithubActionsDeploymentSettings(saveGuid);
+    } else {
+      this._saveAppServiceDeploymentSettings(saveGuid);
+    }
+  }
+
+  private _saveAppServiceDeploymentSettings(saveGuid: string) {
     let notificationId = null;
     this._portalService
       .startNotification(
@@ -85,6 +94,67 @@ export class StepCompleteComponent {
               notificationId,
               true,
               this._translateService.instant(PortalResources.settingupDeploymentSuccess)
+            );
+            this._broadcastService.broadcastEvent<void>(BroadcastEvent.ReloadDeploymentCenter);
+            this._portalService.logAction('deploymentcenter', 'save', {
+              id: saveGuid,
+              succeeded: 'true',
+            });
+          } else {
+            this._portalService.stopNotification(
+              notificationId,
+              false,
+              this._translateService.instant(PortalResources.settingupDeploymentFailWithStatusMessage).format(r.statusMessage)
+            );
+            this._logService.error(LogCategories.cicd, '/save-cicd', r.statusMessage);
+            this._portalService.logAction('deploymentcenter', 'save', {
+              id: saveGuid,
+              succeeded: 'false',
+              statusMessage: r.statusMessage,
+            });
+          }
+        },
+        err => {
+          this.clearBusy();
+
+          const errorMessage =
+            err && err.json() && err.json().message
+              ? err && err.json() && err.json().message
+              : this._translateService.instant(PortalResources.settingupDeploymentFail);
+
+          this._portalService.stopNotification(notificationId, false, errorMessage);
+          this._logService.error(LogCategories.cicd, '/save-cicd', err);
+          this._portalService.logAction('deploymentcenter', 'save', {
+            id: saveGuid,
+            succeeded: 'false',
+          });
+        }
+      );
+  }
+
+  private _saveGithubActionsDeploymentSettings(saveGuid: string) {
+    let notificationId = null;
+    this.wizard.wizardValues.githubActionsConfigContent = btoa(this.GithubActionsWorkflowConfig);
+    this._portalService
+      .startNotification(
+        this._translateService.instant(PortalResources.settingupDeployment),
+        'Adding workflow configuration to GitHub Actions'
+      )
+      .take(1)
+      .do(notification => {
+        notificationId = notification.id;
+      })
+      .concatMap(() => this.wizard.deploy())
+      .subscribe(
+        r => {
+          this.clearBusy();
+          if (r.status === 'succeeded') {
+            this._portalService.stopNotification(
+              notificationId,
+              true,
+              `Successfully committed .github/workflows/appsvc-portal.yml workflow file to ${
+                this.wizard.wizardValues.sourceSettings.repoUrl
+              }`
             );
             this._broadcastService.broadcastEvent<void>(BroadcastEvent.ReloadDeploymentCenter);
             this._portalService.logAction('deploymentcenter', 'save', {
