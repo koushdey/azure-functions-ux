@@ -10,11 +10,11 @@ import { DeploymentDashboard } from '../deploymentDashboard';
 import { SiteService } from 'app/shared/services/site.service';
 
 @Component({
-  selector: 'app-github-action-dashboard',
-  templateUrl: './ithub-action-dashboard.component.html',
-  styleUrls: ['./ithub-action-dashboard.component.scss'],
+  selector: 'app-github-actions-dashboard',
+  templateUrl: './github-actions-dashboard.component.html',
+  styleUrls: ['./github-actions-dashboard.component.scss'],
 })
-export class KuduDashboardComponent extends DeploymentDashboard implements OnChanges, OnDestroy {
+export class GithubActionsDashboardComponent extends DeploymentDashboard implements OnChanges, OnDestroy {
   @Input()
   resourceId: string;
 
@@ -48,7 +48,7 @@ export class KuduDashboardComponent extends DeploymentDashboard implements OnCha
         this.deploymentObject = {
           site: responses.site,
           siteConfig: responses.siteConfig,
-          siteMetadata: responses.siteConfig,
+          siteMetadata: responses.siteMetadata,
           sourceControls: null,
           publishingCredentials: null,
           deployments: null,
@@ -74,6 +74,13 @@ export class KuduDashboardComponent extends DeploymentDashboard implements OnCha
 
   get actionsLink() {
     return `${this.deploymentObject.siteMetadata.properties['GithubActionSettingsRepoUrl']}/actions`;
+  }
+
+  repoLinkClick() {
+    if (this.repo) {
+      const win = window.open(this.repo, '_blank');
+      win.focus();
+    }
   }
 
   ngOnDestroy(): void {

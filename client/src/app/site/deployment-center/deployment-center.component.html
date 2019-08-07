@@ -1,7 +1,7 @@
 <div class="full">
     <ng-sidebar-container class="full">
         <div class="full" ng-sidebar-content>
-            <app-github-actions-dashboard *ngIf="" [resourceId]="resourceId"></app-github-actions-dashboard>
+            <app-github-actions-dashboard *ngIf="githubActionsDeploymentSetup" [resourceId]="resourceId"></app-github-actions-dashboard>
             <app-vso-dashboard *ngIf="vstsDeploymentSetup" [resourceId]="resourceId"> </app-vso-dashboard>
             <app-kudu-dashboard *ngIf="kuduDeploymentSetup" [resourceId]="resourceId" (disconnected)="refreshedSCMType()"></app-kudu-dashboard>
             <app-deployment-center-setup *ngIf="noDeploymentSetup" [resourceId]="resourceId">

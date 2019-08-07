@@ -28,11 +28,13 @@ import { LinuxFramworksComponent } from './deployment-center-setup/step-configur
 import { WindowsFramworksComponent } from './deployment-center-setup/step-configure/configure-vsts-build/windows-frameworks/windows-frameworks.component';
 import { NgxDatatableModule } from 'ngx-datatable-accessable';
 import { FunctionsFramworksComponent } from './deployment-center-setup/step-configure/configure-vsts-build/functions-frameworks/functions-frameworks.component';
+import { GithubActionsDashboardComponent } from './provider-dashboards/github-actions-dashboard/github-actions-dashboard.component';
 
 @NgModule({
   entryComponents: [DeploymentCenterComponent],
   declarations: [
     DeploymentCenterComponent,
+    GithubActionsDashboardComponent,
     KuduDashboardComponent,
     VsoDashboardComponent,
     DeploymentCenterSetupComponent,
