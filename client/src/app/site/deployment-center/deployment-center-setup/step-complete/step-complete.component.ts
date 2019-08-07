@@ -390,7 +390,8 @@ jobs:
     - uses: azure/appservice-actions/webapp@master
       with:
         app-name: ${appName}
-        publish-profile: \${{ secrets.azureWebAppPublishProfile }}`;
+        package: '.'
+        publish-profile: \${{ secrets.michinoyWebAppPublishProfile }}`;
   }
 
   private _getDefaultGithubActionsWorkflowConfig(appName: string) {
