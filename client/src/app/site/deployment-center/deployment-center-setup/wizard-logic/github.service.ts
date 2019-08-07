@@ -31,10 +31,18 @@ export class GithubService implements OnDestroy {
     });
   }
 
-  fetchUserRepos(authToken: string, org: string, page?: number) {
-    const url = page
-      ? `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner&page=${page}`
-      : `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner`;
+  fetchUserRepos(authToken: string, org: string, page?: number, ownerAccessRequired: boolean = true) {
+    let url;
+
+    if (ownerAccessRequired) {
+      url = page
+        ? `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner&page=${page}`
+        : `${DeploymentCenterConstants.githubApiUrl}/user/repos?type=owner`;
+    } else {
+      url = page
+        ? `${DeploymentCenterConstants.githubApiUrl}/user/repos?page=${page}`
+        : `${DeploymentCenterConstants.githubApiUrl}/user/repos`;
+    }
 
     return this._cacheService.post(Constants.serviceHost + `api/github/passthrough?repo=${org}&t=${Guid.newTinyGuid()}`, true, null, {
       url,

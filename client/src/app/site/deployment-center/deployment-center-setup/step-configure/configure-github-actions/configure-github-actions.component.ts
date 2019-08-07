@@ -178,17 +178,13 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
   private _loadRepositories(responses: any[]) {
     const newRepoList: DropDownElement<string>[] = [];
     this.repoUrlToNameMap = {};
-    responses
-      .filter(repo => {
-        return !repo.permissions || repo.permissions.admin;
-      })
-      .forEach(repo => {
-        newRepoList.push({
-          displayLabel: repo.name,
-          value: repo.html_url,
-        });
-        this.repoUrlToNameMap[repo.html_url] = repo.full_name;
+    responses.forEach(repo => {
+      newRepoList.push({
+        displayLabel: repo.name,
+        value: repo.html_url,
       });
+      this.repoUrlToNameMap[repo.html_url] = repo.full_name;
+    });
 
     this.RepoList = newRepoList;
     this.reposLoading = false;
@@ -203,14 +199,14 @@ export class ConfigureGithubActionsComponent implements OnDestroy {
   }
 
   private _fetchUserRepos(org: string) {
-    return this._githubService.fetchUserRepos(this.wizard.getToken(), org).switchMap(r => {
+    return this._githubService.fetchUserRepos(this.wizard.getToken(), org, null, false).switchMap(r => {
       const linkHeader = r.headers.toJSON().link;
       const pageCalls: Observable<any>[] = [Observable.of(r)];
       if (linkHeader) {
         const links = ResponseHeader.getLinksFromLinkHeader(linkHeader);
         const lastPageNumber = this._getLastPage(links);
         for (let i = 2; i <= lastPageNumber; i++) {
-          pageCalls.push(this._githubService.fetchUserRepos(this.wizard.getToken(), org, i));
+          pageCalls.push(this._githubService.fetchUserRepos(this.wizard.getToken(), org, i, false));
         }
       }
       return Observable.forkJoin(pageCalls);
