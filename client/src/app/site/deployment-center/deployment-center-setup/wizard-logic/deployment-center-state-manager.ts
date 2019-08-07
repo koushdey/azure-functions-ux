@@ -39,7 +39,7 @@ import { VSOAccount } from '../../Models/vso-repo';
 import { AzureDevOpsService } from './azure-devops.service';
 import { LocalStorageService } from '../../../../shared/services/local-storage.service';
 import { GithubService } from './github.service';
-import { WorkflowCommit, FileContent } from '../../Models/github';
+import { WorkflowCommit } from '../../Models/github';
 
 const CreateAadAppPermissionStorageKey = 'DeploymentCenterSessionCanCreateAadApp';
 @Injectable()

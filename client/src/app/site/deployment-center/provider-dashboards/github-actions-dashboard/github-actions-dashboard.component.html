@@ -1,0 +1,73 @@
+<ng-sidebar-container style="height:100vh" [animate]="true">
+        <div ng-sidebar-content>
+          <command-bar>
+            <command displayText="{{ 'browse' | translate }}" iconUrl="image/external.svg" (click)="browseToSite()"></command>
+          </command-bar>
+
+          <div id="essentials-container">
+            <div class="essentials-col">
+              <div>
+                <label id="siteStatusLabel">{{'source' | translate}}</label>
+                <div tabindex="0" id="siteStatusValue" aria-labelledby="siteStatusLabel siteStatusValue">
+                  GitHub
+                </div>
+              </div>
+
+              <div>
+                <label id="siteStatusLabel">{{'build' | translate}}</label>
+                <div tabindex="0" id="siteStatusValue" aria-labelledby="siteStatusLabel siteStatusValue">
+                  GitHub Actions
+                </div>
+              </div>
+            </div>
+
+
+            <div class="essentials-col" *ngIf="branch">
+              <div>
+                <label id="siteStatusLabel">{{'repository' | translate}}</label>
+                <div>
+                  <a (click)="repoLinkClick()" tabindex="0" id="siteSubscriptionNameLink" aria-labelledby="siteSubscriptionNameLabel siteSubscriptionNameLink">
+                    {{repo}}
+                  </a>
+                  <copy-pre [content]="repo" [onlyCopyButton]="true"></copy-pre>
+                </div>
+              </div>
+
+              <div>
+                <label id="siteStatusLabel">{{'branch' | translate}}</label>
+                <div tabindex="0" id="siteStatusValue" aria-labelledby="siteStatusLabel siteStatusValue">
+                  {{branch}}
+                </div>
+              </div>
+            </div>
+
+            <div class="essentials-col">
+              <div>
+                <label id="siteStatusLabel">Workflow Path</label>
+                <div tabindex="0" id="siteStatusValue" aria-labelledby="siteStatusLabel siteStatusValue">
+                  .github/workflows/appsvc-portal.yml
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="list-container">
+              Please visit <a [href]="actionsLink">GitHub Actions</a> on your repository to view build and deployment logs.
+          </div>
+        </div>
+        <ng-sidebar
+        #sidebar
+        *ngIf="sidePanelOpened"
+        [(opened)]="sidePanelOpened"
+        [mode]="'over'"
+        [position]="'right'"
+        [closeOnClickOutside]="true"
+        [trapFocus]="false"
+        [autoFocus]="true"
+        [sidebarClass]="'sidebar'"
+        [ariaLabel]="'deploymentDetails'| translate"
+        [animate]="true"
+        [showBackdrop]="true">
+          <app-deployment-detail [hidden]="hideCreds" [deploymentObject]="rightPaneItem" [redeployEnabled]="redeployEnabled" (closePanel)="sidebar.close()"></app-deployment-detail>
+          <app-deployment-credentials [hidden]="!hideCreds" [resourceId]="resourceId" [localGit]="sourceLocation === 'Local Git'"></app-deployment-credentials>
+        </ng-sidebar>
+      </ng-sidebar-container>

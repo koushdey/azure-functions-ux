@@ -59,6 +59,16 @@ export class SiteService {
     return this._client.execute({ resourceId: resourceId }, t => getSiteConfig);
   }
 
+  fetchSiteConfigMetadata(resourceId: string, force?: boolean): Result<ArmObj<{ [key: string]: string }>> {
+    const fetchMetadata = this._cacheService
+      .postArm(`${resourceId}/config/metadata/list`, force, ARMApiVersions.websiteApiVersion20181101)
+      .map(r => {
+        const metadata: ArmObj<{ [key: string]: string }> = r.json();
+        return metadata;
+      });
+    return this._client.execute({ resourceId: resourceId }, t => fetchMetadata);
+  }
+
   getAppSettings(resourceId: string, force?: boolean): Result<ArmObj<ApplicationSettings>> {
     const getAppSettings = this._cacheService.postArm(`${resourceId}/config/appSettings/list`, force).map(r => r.json());
 

@@ -3,8 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import { Constants, DeploymentCenterConstants } from 'app/shared/models/constants';
 import { CacheService } from 'app/shared/services/cache.service';
 import { Guid } from 'app/shared/Utilities/Guid';
-import { Observable } from 'rxjs';
-import { Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
 import { FileContent } from '../../Models/github';
 
 @Injectable()
