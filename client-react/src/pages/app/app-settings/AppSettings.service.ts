@@ -10,7 +10,8 @@ import MakeArmCall from '../../../ApiHelpers/ArmHelper';
 import { HttpResponseObject } from '../../../ArmHelper.types';
 import PortalCommunicator from '../../../portal-communicator';
 
-export const fetchApplicationSettingValues = async (resourceId: string) => {
+export const fetchApplicationSettingValues = async (resourceId: string, fail: boolean) => {
+  const id = fail ? `${resourceId}xyz` : resourceId;
   const [
     webConfig,
     metadata,
@@ -24,7 +25,7 @@ export const fetchApplicationSettingValues = async (resourceId: string) => {
   ] = await Promise.all([
     SiteService.fetchWebConfig(resourceId),
     SiteService.fetchMetadata(resourceId),
-    SiteService.fetchSlotConfigNames(resourceId),
+    SiteService.fetchSlotConfigNames(id),
     SiteService.fetchConnectionStrings(resourceId),
     SiteService.fetchApplicationSettings(resourceId),
     StorageService.fetchAzureStorageAccounts(resourceId),

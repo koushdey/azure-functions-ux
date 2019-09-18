@@ -72,7 +72,7 @@ const AppSettingsDataLoader: React.FC<AppSettingsDataLoaderProps> = props => {
     return ignoreRbacAndLocks ? response.metadata.status !== 403 && response.metadata.status !== 409 : true;
   };
 
-  const fetchData = async () => {
+  const fetchData = async (fail: boolean) => {
     const site = await siteContext.fetchSite(resourceId);
     const {
       webConfig,
@@ -84,7 +84,7 @@ const AppSettingsDataLoader: React.FC<AppSettingsDataLoaderProps> = props => {
       azureStorageMounts,
       windowsStacks,
       linuxStacks,
-    } = await fetchApplicationSettingValues(resourceId);
+    } = await fetchApplicationSettingValues(resourceId, fail);
 
     const loadingFailed =
       armCallFailed(site) ||
@@ -158,13 +158,13 @@ const AppSettingsDataLoader: React.FC<AppSettingsDataLoaderProps> = props => {
     }
   };
 
-  const loadData = () => {
-    fetchData();
+  const loadData = (fail: boolean) => {
+    fetchData(fail);
     fillSlots();
   };
 
   useEffect(() => {
-    loadData();
+    loadData(true);
   }, []);
 
   const scaleUpPlan = async () => {
@@ -179,7 +179,7 @@ const AppSettingsDataLoader: React.FC<AppSettingsDataLoaderProps> = props => {
   const refreshAppSettings = () => {
     setRefreshValues(true);
     setLoadingFailure(false);
-    loadData();
+    loadData(false);
   };
 
   const onSubmit = async (values: AppSettingsFormValues, actions: FormikActions<AppSettingsFormValues>) => {
