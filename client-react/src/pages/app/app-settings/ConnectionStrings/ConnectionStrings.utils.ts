@@ -42,9 +42,9 @@ export const getErrorMessage = (newValue: string, disableSlotSetting: boolean, t
       case 'any.unknown':
         return disableSlotSetting && details.context!.key === 'slotSetting'
           ? t('slotSettingForbiddenProperty').format(details.context!.key)
-          : t('jsonInvalid');
+          : details.message || t('jsonInvalid');
       default:
-        return t('jsonInvalid');
+        return details.message || t('jsonInvalid');
     }
   } catch (err) {
     return t('jsonInvalid');
