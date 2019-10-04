@@ -15,7 +15,11 @@ export interface AppKeysDataLoaderProps {
 
 const AppKeysDataLoader: React.FC<AppKeysDataLoaderProps> = props => {
   const { resourceId } = props;
-  const [initialValues, setInitialValues] = useState<AppKeysFormValues | null>(null);
+  const [initialValues, setInitialValues] = useState<AppKeysFormValues | { site: {}; hostKeys: []; systemKeys: [] }>({
+    site: {},
+    hostKeys: [],
+    systemKeys: [],
+  });
   const [refreshLoading, setRefeshLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const portalContext = useContext(PortalContext);
@@ -48,13 +52,14 @@ const AppKeysDataLoader: React.FC<AppKeysDataLoaderProps> = props => {
   useEffect(() => {
     fetchData();
   }, []);
-  if (initialLoading || !initialValues || refreshLoading) {
-    return <LoadingComponent />;
-  }
+  // if (initialLoading || !initialValues || refreshLoading) {
+  //   return <LoadingComponent />;
+  // }
 
   return (
     <AppKeysContext.Provider value={appKeysData}>
-      <AppKeys resourceId={resourceId} initialValues={initialValues} refreshData={refreshData} />
+      {(initialLoading || refreshLoading) && <LoadingComponent />}
+      <AppKeys loading={initialLoading || !initialValues} resourceId={resourceId} initialValues={initialValues} refreshData={refreshData} />
     </AppKeysContext.Provider>
   );
 };

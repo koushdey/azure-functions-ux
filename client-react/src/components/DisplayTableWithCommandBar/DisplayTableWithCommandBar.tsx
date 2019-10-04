@@ -9,11 +9,12 @@ import DisplayTableWithEmptyMessage, {
 
 interface DisplayTableWithCommandBarProps {
   commandBarItems?: ICommandBarItemProps[];
+  loading?: boolean;
 }
 
 type Props = DisplayTableWithEmptyMessageProps & DisplayTableWithCommandBarProps & IDetailsListProps;
 const DisplayTableWithCommandBar: React.SFC<Props> = props => {
-  const { commandBarItems } = props;
+  const { commandBarItems, loading } = props;
   const theme = useContext(ThemeContext);
 
   return (
@@ -22,7 +23,7 @@ const DisplayTableWithCommandBar: React.SFC<Props> = props => {
         <CommandBar items={commandBarItems} aria-role="nav" styles={commandBarStyles(theme)} buttonAs={DisplayTableCommandBarButton} />
       )}
       {props.children}
-      <DisplayTableWithEmptyMessage {...props} />
+      <DisplayTableWithEmptyMessage loading={loading} {...props} />
     </>
   );
 };

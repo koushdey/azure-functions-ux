@@ -1,12 +1,14 @@
-import { DetailsList, IDetailsListProps } from 'office-ui-fabric-react/lib/DetailsList';
+import { IDetailsListProps } from 'office-ui-fabric-react/lib/DetailsList';
 import React, { useContext } from 'react';
 import { style } from 'typestyle';
 
 import { ThemeExtended } from '../../theme/SemanticColorsExtended';
 import { ThemeContext } from '../../ThemeContext';
+import { ShimmeredDetailsList } from 'office-ui-fabric-react';
 
 export interface DisplayTableWithEmptyMessageProps {
   emptyMessage?: string;
+  loading?: boolean;
 }
 const emptyTableMessageStyle = (theme: ThemeExtended) =>
   style({
@@ -25,11 +27,11 @@ export const defaultCellStyle = style({
 type Props = DisplayTableWithEmptyMessageProps & IDetailsListProps;
 const DisplayTableWithEmptyMessage: React.SFC<Props> = props => {
   const theme = useContext(ThemeContext);
-  const { emptyMessage, ...rest } = props;
+  const { emptyMessage, loading, ...rest } = props;
   return (
     <>
-      <DetailsList {...rest} />
-      {props.items.length === 0 && !!emptyMessage && <div className={emptyTableMessageStyle(theme)}>{emptyMessage}</div>}
+      <ShimmeredDetailsList {...rest} enableShimmer={loading} shimmerLines={2} />
+      {!loading && props.items.length === 0 && !!emptyMessage && <div className={emptyTableMessageStyle(theme)}>{emptyMessage}</div>}
     </>
   );
 };

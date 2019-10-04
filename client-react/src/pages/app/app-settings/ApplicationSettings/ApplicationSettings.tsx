@@ -118,6 +118,7 @@ export class ApplicationSettings extends React.Component<FormikProps<AppSettings
 
   private _getCommandBarItems = (): ICommandBarItemProps[] => {
     const { editable } = this.context;
+    const disable = true;
     const { t, values } = this.props;
     const { showAllValues, shownValues } = this.state;
     const allShown = showAllValues || (values.appSettings.length > 0 && shownValues.length === values.appSettings.length);
@@ -126,13 +127,14 @@ export class ApplicationSettings extends React.Component<FormikProps<AppSettings
       {
         key: 'app-settings-application-settings-add',
         onClick: this._createNewItem,
-        disabled: !editable,
+        disabled: disable || !editable,
         iconProps: { iconName: 'Add' },
         name: t('newApplicationSetting'),
         ariaLabel: t('addNewSetting'),
       },
       {
         key: 'app-settings-application-settings-show-hide',
+        disabled: disable,
         onClick: this._flipHideSwitch,
         iconProps: { iconName: !allShown ? 'RedEye' : 'Hide' },
         name: !allShown ? t('showValues') : t('hideValues'),
@@ -140,12 +142,13 @@ export class ApplicationSettings extends React.Component<FormikProps<AppSettings
       {
         key: 'app-settings-application-settings-bulk-edit',
         onClick: this._openBulkEdit,
-        disabled: !editable,
+        disabled: disable || !editable,
         iconProps: { iconName: 'Edit' },
         name: t('advancedEdit'),
       },
       {
         key: 'app-settings-application-settings-show-filter',
+        disabled: disable,
         onClick: this._toggleFilter,
         iconProps: { iconName: 'Filter' },
         name: t('filter'),

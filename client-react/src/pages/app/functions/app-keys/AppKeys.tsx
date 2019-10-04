@@ -9,14 +9,15 @@ import { ThemeContext } from '../../../../ThemeContext';
 
 export interface AppKeysProps {
   resourceId: string;
-  initialValues: AppKeysFormValues;
+  loading: boolean;
+  initialValues: AppKeysFormValues | { site: {}; hostKeys: []; systemKeys: [] };
   refreshData: () => void;
 }
 
 export const emptyKey = { name: '', value: '' };
 
 const AppKeys: React.FC<AppKeysProps> = props => {
-  const { refreshData, initialValues, resourceId } = props;
+  const { refreshData, initialValues, resourceId, loading } = props;
   const { t } = useTranslation();
   const theme = useContext(ThemeContext);
 
@@ -29,7 +30,7 @@ const AppKeys: React.FC<AppKeysProps> = props => {
         </MessageBar>
       </div>
       <div id="app-keys-data" className={formStyle}>
-        <AppKeysPivot refreshData={refreshData} initialValues={initialValues} resourceId={resourceId} />
+        <AppKeysPivot loading={loading} refreshData={refreshData} initialValues={initialValues} resourceId={resourceId} />
       </div>
     </div>
   );

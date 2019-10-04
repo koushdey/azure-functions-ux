@@ -25,14 +25,15 @@ import { ThemeContext } from '../../../../ThemeContext';
 
 interface HostKeysProps {
   resourceId: string;
-  site: ArmObj<Site>;
+  site: ArmObj<Site> | {};
   hostKeys: AppKeysModel[];
   refreshData: () => void;
+  loading: boolean;
 }
 
 const HostKeys: React.FC<HostKeysProps> = props => {
   const writePermission = false;
-  const { hostKeys, resourceId, refreshData } = props;
+  const { hostKeys, resourceId, refreshData, loading } = props;
   const [showValues, setShowValues] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
@@ -216,7 +217,7 @@ const HostKeys: React.FC<HostKeysProps> = props => {
       {
         key: 'app-keys-host-keys-add',
         onClick: () => showAddEditPanel(),
-        disabled: writePermission,
+        disabled: loading || writePermission,
         iconProps: { iconName: 'Add' },
         name: t('newHostKey'),
         ariaLabel: t('addHostKey'),
@@ -224,11 +225,13 @@ const HostKeys: React.FC<HostKeysProps> = props => {
       {
         key: 'app-keys-host-keys-show-hide',
         onClick: flipHideSwitch,
+        disabled: loading,
         iconProps: { iconName: !showValues ? 'RedEye' : 'Hide' },
         name: !showValues ? t('showValues') : t('hideValues'),
       },
       {
         key: 'app-keys-host-keys-show-filter',
+        disabled: loading,
         onClick: toggleFilter,
         iconProps: { iconName: 'Filter' },
         name: t('filter'),
@@ -275,6 +278,7 @@ const HostKeys: React.FC<HostKeysProps> = props => {
         onDismiss={closeRenewKeyDialog}
       />
       <DisplayTableWithCommandBar
+        loading={loading}
         commandBarItems={getCommandBarItems()}
         columns={getColumns()}
         items={filterValues()}

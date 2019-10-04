@@ -25,14 +25,15 @@ import ConfirmDialog from '../../../../components/ConfirmDialog/ConfirmDialog';
 
 interface SystemKeysProps {
   resourceId: string;
-  site: ArmObj<Site>;
+  site: ArmObj<Site> | {};
   systemKeys: AppKeysModel[];
   refreshData: () => void;
+  loading: boolean;
 }
 
 const SystemKeys: React.FC<SystemKeysProps> = props => {
   const writePermission = false;
-  const { systemKeys, resourceId, refreshData } = props;
+  const { systemKeys, resourceId, refreshData, loading } = props;
   const [showValues, setShowValues] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
@@ -235,7 +236,7 @@ const SystemKeys: React.FC<SystemKeysProps> = props => {
       {
         key: 'app-keys-system-keys-add',
         onClick: () => showAddEditPanel(),
-        disabled: writePermission,
+        disabled: loading || writePermission,
         iconProps: { iconName: 'Add' },
         name: t('newSystemKey'),
         ariaLabel: t('addSystemKey'),
@@ -243,12 +244,14 @@ const SystemKeys: React.FC<SystemKeysProps> = props => {
       {
         key: 'app-keys-system-keys-show-hide',
         onClick: flipHideSwitch,
+        disabled: loading,
         iconProps: { iconName: !showValues ? 'RedEye' : 'Hide' },
         name: !showValues ? t('showValues') : t('hideValues'),
       },
       {
         key: 'app-keys-system-keys-show-filter',
         onClick: toggleFilter,
+        disabled: loading,
         iconProps: { iconName: 'Filter' },
         name: t('filter'),
       },
@@ -272,6 +275,7 @@ const SystemKeys: React.FC<SystemKeysProps> = props => {
         onDismiss={closeRenewKeyDialog}
       />
       <DisplayTableWithCommandBar
+        loading={loading}
         commandBarItems={getCommandBarItems()}
         columns={getColumns()}
         items={filterValues()}
