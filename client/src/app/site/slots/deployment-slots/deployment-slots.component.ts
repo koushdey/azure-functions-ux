@@ -548,7 +548,7 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
   private _openSwapPane() {
     const bladeInfo: OpenBladeInfo<FrameBladeParams> = {
       detailBlade: 'SwapSlotsFrameBlade',
-      detailBladeInputs: { id: this.siteArm.id },
+      detailBladeInputs: { id: this.resourceId },
       openAsContextBlade: true,
     };
 
@@ -589,7 +589,7 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
   private _openAddPane() {
     const bladeInfo: OpenBladeInfo<FrameBladeParams> = {
       detailBlade: 'AddSlotFrameBlade',
-      detailBladeInputs: { id: this.siteArm.id },
+      detailBladeInputs: { id: this.resourceId },
       openAsContextBlade: true,
     };
 
@@ -629,7 +629,7 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
   }
 
   openActivityLog() {
-    const siteDescriptor = new ArmSiteDescriptor(this.siteArm.id);
+    const siteDescriptor = new ArmSiteDescriptor(this.resourceId);
 
     // See https://msazure.visualstudio.com/One/_git/AzureUX-ActivityLog?path=%2Fsrc%2FActivityLogExtension%2FClient%2FEvents%2FModels%2FSharedEventModels.ts&version=GBdev
     const query = {
