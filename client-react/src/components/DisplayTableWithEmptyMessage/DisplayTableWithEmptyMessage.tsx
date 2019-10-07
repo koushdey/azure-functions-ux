@@ -24,13 +24,18 @@ export const defaultCellStyle = style({
   fontSize: '12px',
   height: '15px',
 });
+const initialShimmerStyle = (loading?: boolean) =>
+  style({
+    overflow: loading ? 'hidden' : 'initial',
+  });
+
 type Props = DisplayTableWithEmptyMessageProps & IDetailsListProps;
 const DisplayTableWithEmptyMessage: React.SFC<Props> = props => {
   const theme = useContext(ThemeContext);
   const { emptyMessage, loading, ...rest } = props;
   return (
     <>
-      <ShimmeredDetailsList {...rest} enableShimmer={loading} shimmerLines={2} />
+      <ShimmeredDetailsList {...rest} enableShimmer={loading} shimmerLines={2} className={initialShimmerStyle(loading)} />
       {!loading && props.items.length === 0 && !!emptyMessage && <div className={emptyTableMessageStyle(theme)}>{emptyMessage}</div>}
     </>
   );
