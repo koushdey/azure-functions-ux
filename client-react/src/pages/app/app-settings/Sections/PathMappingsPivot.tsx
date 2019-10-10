@@ -64,6 +64,12 @@ const PathMappingsPivot: React.FC<FormikProps<AppSettingsFormValues> & PathMappi
 };
 
 export const pathMappingsDirty = (values: AppSettingsFormValues, initialValues: AppSettingsFormValues) => {
+  for (const propertyName in values.azureStorageMounts) {
+    if (values.azureStorageMounts[propertyName] !== initialValues.azureStorageMounts[propertyName]) {
+      return true;
+    }
+  }
+
   return (
     !isEqual(values.virtualApplications, initialValues.virtualApplications) ||
     !isEqual(values.config.properties.handlerMappings, initialValues.config.properties.handlerMappings)
