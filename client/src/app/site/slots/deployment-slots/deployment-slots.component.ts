@@ -7,10 +7,11 @@ import { ArmSiteDescriptor } from '../../../shared/resourceDescriptors';
 import { FeatureComponent } from '../../../shared/components/feature-component';
 import { BroadcastEvent, EventMessage } from '../../../shared/models/broadcast-event';
 import { Links, LogCategories, ScenarioIds, SiteTabIds, SlotOperationState, SwapOperationType } from '../../../shared/models/constants';
+import { HttpResult } from '../../../shared/models/http-result';
 import { OpenBladeInfo, EventVerbs, FrameBladeParams } from '../../../shared/models/portal';
 import { PortalResources } from '../../../shared/models/portal-resources';
 import { SlotSwapInfo, SlotNewInfo } from '../../../shared/models/slot-events';
-import { ArmObj, ResourceId } from '../../../shared/models/arm/arm-obj';
+import { ArmObj, ResourceId, ArmArrayResult } from '../../../shared/models/arm/arm-obj';
 import { RoutingRule } from '../../../shared/models/arm/routing-rule';
 import { Site } from '../../../shared/models/arm/site';
 import { SiteConfig } from '../../../shared/models/arm/site-config';
@@ -184,34 +185,8 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
       .switchMap(r => {
         const [siteResult, slotsResult, siteConfigResult] = r;
 
-        let success = true;
+        this._checkLoadingFailures(siteResult, slotsResult, siteConfigResult);
 
-        // TODO (andimarc): If only siteConfigResult fails, don't fail entire UI, just disable controls for routing rules
-        if (!siteResult.isSuccessful) {
-          this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', siteResult.error.result);
-          success = false;
-        }
-        if (!slotsResult.isSuccessful) {
-          this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', slotsResult.error.result);
-          success = false;
-        }
-        if (!siteConfigResult.isSuccessful) {
-          this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', siteConfigResult.error.result);
-          if (!this.isSlot) {
-            success = false;
-          }
-        }
-
-        if (success) {
-          this.prodSiteArm = siteResult.result;
-          this.siteArm = this.isSlot
-            ? slotsResult.result.value.filter(s => s.id.toLowerCase() === this.resourceId.toLowerCase())[0]
-            : siteResult.result;
-          this.deploymentSlotsArm = slotsResult.result.value;
-          this.prodSiteConfigArm = siteConfigResult.result;
-        }
-
-        this.loadingFailed = !success;
         this.fetchingContent = false;
         this.keepVisible = false;
 
@@ -219,16 +194,12 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
 
         this.clearBusyEarly();
 
-        if (success) {
-          return Observable.zip(
-            this._authZService.hasPermission(this.resourceId, [AuthzService.writeScope]),
-            this._authZService.hasPermission(this.resourceId, [AuthzService.swapScope]),
-            this._authZService.hasReadOnlyLock(this.resourceId),
-            this._scenarioService.checkScenarioAsync(ScenarioIds.getSiteSlotLimits, { site: siteResult.result })
-          );
-        } else {
-          return Observable.zip(Observable.of(false), Observable.of(false), Observable.of(true), Observable.of(null));
-        }
+        return Observable.zip(
+          this._authZService.hasPermission(this.resourceId, [AuthzService.writeScope]),
+          this._authZService.hasPermission(this.resourceId, [AuthzService.slotswapScope]),
+          this._authZService.hasReadOnlyLock(this.resourceId),
+          this._scenarioService.checkScenarioAsync(ScenarioIds.getSiteSlotLimits, { site: siteResult.result })
+        );
       })
       .do(r => {
         const [hasWritePermission, hasSwapPermission, hasReadOnlyLock, slotsQuotaCheck] = r;
@@ -257,6 +228,45 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
 
         this._updateDisabledState();
       });
+  }
+
+  private _checkLoadingFailures(
+    siteResult: HttpResult<ArmObj<Site>>,
+    slotsResult: HttpResult<ArmArrayResult<Site>>,
+    siteConfigResult: HttpResult<ArmObj<SiteConfig>>
+  ) {
+    let loadingFailed = false;
+
+    if (siteResult.isSuccessful) {
+      this.prodSiteArm = siteResult.result;
+      if (!this.isSlot) {
+        this.siteArm = siteResult.result;
+      }
+    } else {
+      this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', siteResult.error.result);
+      loadingFailed = true;
+    }
+
+    if (slotsResult.isSuccessful) {
+      this.deploymentSlotsArm = slotsResult.result.value;
+      if (this.isSlot) {
+        this.siteArm = slotsResult.result.value.filter(s => s.id.toLowerCase() === this.resourceId.toLowerCase())[0];
+      }
+    } else {
+      this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', slotsResult.error.result);
+      loadingFailed = true;
+    }
+
+    if (siteConfigResult.isSuccessful) {
+      this.prodSiteConfigArm = siteConfigResult.result;
+    } else {
+      this._logService.error(LogCategories.deploymentSlots, '/deployment-slots', siteConfigResult.error.result);
+      if (!this.isSlot) {
+        loadingFailed = true;
+      }
+    }
+
+    this.loadingFailed = loadingFailed;
   }
 
   private _setupBroadcastSubscriptions() {
@@ -365,7 +375,7 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
 
     this.refreshCommandDisabled = operationOpenOrInProgress || !this.featureSupported;
 
-    this.saveAndDiscardCommandsDisabled = this.refreshCommandDisabled || !this.hasWriteAccess;
+    this.saveAndDiscardCommandsDisabled = this.refreshCommandDisabled || !this.hasWriteAccess || !this.prodSiteConfigArm;
     if (this.mainForm && this.mainForm.controls['rulesGroup']) {
       if (this.saveAndDiscardCommandsDisabled || this.isSlot) {
         this.mainForm.controls['rulesGroup'].disable();
@@ -374,7 +384,7 @@ export class DeploymentSlotsComponent extends FeatureComponent<TreeViewInfo<Site
       }
     }
 
-    this.addSlotCommandDisabled = this.saveAndDiscardCommandsDisabled || !!this.slotsQuotaMessage;
+    this.addSlotCommandDisabled = this.refreshCommandDisabled || !this.hasWriteAccess || !!this.slotsQuotaMessage;
     this.swapSlotsCommandDisabled =
       this.refreshCommandDisabled || !this.hasSwapAccess || !this.deploymentSlotsArm || !this.deploymentSlotsArm.length;
 

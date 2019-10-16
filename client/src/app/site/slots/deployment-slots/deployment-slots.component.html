@@ -89,7 +89,7 @@
             <ng-container *ngIf="!fetchingPermissions">
 
                 <info-box
-                    *ngIf="!hasWriteAccess"
+                    *ngIf="!hasWriteAccess && !isSlot"
                     typeClass="warning"
                     [infoText]="'noWritePermission' | translate"
                     [dismissable]="true">
@@ -211,6 +211,7 @@
                     </td>
 
                     <!--
+
                         isSlot && !prodSiteConfigArm
                         isSlot && !!prodSiteConfigArm
 

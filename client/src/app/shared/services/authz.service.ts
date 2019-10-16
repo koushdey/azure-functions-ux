@@ -14,7 +14,9 @@ export class AuthzService implements IAuthzService {
   public static writeScope = './write';
   public static deleteScope = './delete';
   public static actionScope = './action';
-  public static swapScope = './slotsswap/action';
+  public static slotswapScope = './slotsswap/action';
+  public static applySlotConfigScope = './applySlotConfig/action';
+  public static resetSlotConfigScope = './resetSlotConfig/action';
   public static activeDirectoryWriteScope = 'Microsoft.Authorization/*/Write';
 
   constructor(private _portalService: PortalService) {}
