@@ -161,8 +161,10 @@ const AppSettingsDataLoader: React.FC<AppSettingsDataLoaderProps> = props => {
   };
 
   const fetchReferences = async () => {
-    const appSettingReferences = await getAllAppSettingReferences(resourceId);
-    setReferences({ appSettings: appSettingReferences.metadata.success ? getCleanedReferences(appSettingReferences.data) : null });
+    if (!resourceId.includes('/slots/')) {
+      const appSettingReferences = await getAllAppSettingReferences(resourceId);
+      setReferences({ appSettings: appSettingReferences.metadata.success ? getCleanedReferences(appSettingReferences.data) : null });
+    }
   };
 
   const fetchStorageAccounts = async () => {

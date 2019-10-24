@@ -85,6 +85,8 @@ const JavaStack: React.SFC<Props> = props => {
   const javaMajorVersionOptions = getJavaVersionAsDropdownOptions(javaStack);
   const javaMinorVersionOptions = getJavaMinorVersionOptions(currentJavaMajorVersion, javaStack, t('newest'), t('autoUpdate'));
 
+  console.log(stacks);
+
   // container versions
   const frameworks = getJavaContainersOptions(javaContainers);
   const javaFrameworkVersionOptions = getFrameworkVersionOptions(javaContainers, values.config, t('autoUpdate'));
