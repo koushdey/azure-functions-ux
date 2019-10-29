@@ -85,8 +85,8 @@ export class FunctionRuntimeComponent extends FunctionAppContextComponent {
   public disableRuntimeSelector = false;
   public disableSomeVersionSwaps = false;
 
+  public runtimeVersionSupportsScaleMonitoring = false;
   public functionsRuntimeScaleMonitoring = false;
-  public functionsRuntimeScaleMonitoringSupported = false;
   public functionsRuntimeScaleMonitoringOptions: SelectOption<Boolean>[];
   public readonly functionsRuntimeScaleMonitoringLink: string;
   public reservedInstanceCount = 0;
@@ -317,7 +317,7 @@ export class FunctionRuntimeComponent extends FunctionAppContextComponent {
           this.vnetEnabled = !!siteConfig.properties.vnetName;
         }
 
-        this._updateFunctionsRuntimeScaleMonitoringSupported();
+        this._setRuntimeVersionSupportsScaleMonitoring();
         this._busyManager.clearBusy();
         this._aiService.stopTrace('/timings/site/tab/function-runtime/revealed', this.viewInfo.data.siteTabRevealedTraceKey);
       });
@@ -398,7 +398,7 @@ export class FunctionRuntimeComponent extends FunctionAppContextComponent {
         this.exactExtensionVersion = hostStatus ? hostStatus.version : '';
         this.extensionVersion = version;
         this._setNeedUpdateExtensionVersion();
-        this._updateFunctionsRuntimeScaleMonitoringSupported();
+        this._setRuntimeVersionSupportsScaleMonitoring();
         this._busyManager.clearBusy();
         this._cacheService.clearArmIdCachePrefix(this.context.site.id);
         this._appNode.clearNotification(NotificationIds.newRuntimeVersion);
@@ -459,12 +459,10 @@ export class FunctionRuntimeComponent extends FunctionAppContextComponent {
     }
   }
 
-  private _updateFunctionsRuntimeScaleMonitoringSupported() {
+  private _setRuntimeVersionSupportsScaleMonitoring() {
     let supported = false;
-    if (!this.isElasticPremium) {
-      // only supported for Premium Functions
-      supported = false;
-    } else if (
+
+    if (
       this.extensionVersion === FunctionAppRuntimeSetting.tilda1 ||
       FunctionsVersionInfoHelper.getFunctionGeneration(this.exactExtensionVersion) === FunctionAppVersion.v1
     ) {
@@ -491,7 +489,7 @@ export class FunctionRuntimeComponent extends FunctionAppContextComponent {
       supported = this.extensionVersion >= '<minimum version supporting runtime scale monitoring>';
     }
 
-    this.functionsRuntimeScaleMonitoringSupported = supported;
+    this.runtimeVersionSupportsScaleMonitoring = supported;
   }
 
   private _updateFunctionRuntimeScaleMonitoring(value: boolean) {
