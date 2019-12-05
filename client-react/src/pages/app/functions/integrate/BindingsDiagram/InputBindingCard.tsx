@@ -18,16 +18,19 @@ import BindingCard, { BindingCardChildProps, createNew, editExisting, emptyList 
 import { listStyle } from './BindingDiagram.styles';
 
 const InputBindingCard: React.SFC<BindingCardChildProps> = props => {
-  const { functionInfo, bindingsConfig } = props;
+  const { functionInfo, bindingsConfig, isLoading } = props;
   const { t } = useTranslation();
   const theme = useContext(ThemeContext);
   const portalCommunicator = useContext(PortalContext);
   const bindingEditorContext = useContext(BindingEditorContext) as BindingEditorContextInfo;
 
-  const inputs = getInputBindings(functionInfo.properties.config.bindings);
-  const content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, inputs);
+  let content: JSX.Element = <></>;
+  if (!isLoading) {
+    const inputs = getInputBindings(functionInfo.properties.config.bindings);
+    content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, inputs);
+  }
 
-  return <BindingCard title={t('input')} Svg={InputSvg} content={content} {...props} />;
+  return <BindingCard title={t('input')} Svg={InputSvg} content={content} shimmerProps={{ lines: 2 }} {...props} />;
 };
 
 const getInputBindings = (bindings: BindingInfo[]): BindingInfo[] => {

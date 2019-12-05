@@ -1,5 +1,4 @@
 import React from 'react';
-import LoadingComponent from '../../../../components/loading/loading-component';
 import { ArmObj } from '../../../../models/arm-obj';
 import { BindingsConfig } from '../../../../models/functions/bindings-config';
 import { FunctionInfo } from '../../../../models/functions/function-info';
@@ -15,7 +14,7 @@ interface FunctionIntegrateDataLoaderProps {
   resourceId: string;
 }
 
-interface FunctionIntegrateDataLoaderState {
+export interface FunctionIntegrateDataLoaderState {
   functionInfo: ArmObj<FunctionInfo> | null;
   bindingsConfig: BindingsConfig | null;
   isLoading: boolean;
@@ -66,14 +65,10 @@ class FunctionIntegrateDataLoader extends React.Component<FunctionIntegrateDataL
   }
 
   public render() {
-    if (this.state.isLoading) {
-      return <LoadingComponent />;
-    }
-
     const functionInfo = this.state.functionInfo as ArmObj<FunctionInfo>;
     const bindingsConfig = this.state.bindingsConfig as BindingsConfig;
 
-    return <FunctionIntegrate functionInfo={functionInfo} bindingsConfig={bindingsConfig} />;
+    return <FunctionIntegrate isLoading={this.state.isLoading} functionInfo={functionInfo} bindingsConfig={bindingsConfig} />;
   }
 }
 

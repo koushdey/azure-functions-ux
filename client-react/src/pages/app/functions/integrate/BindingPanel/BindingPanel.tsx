@@ -12,7 +12,6 @@ import BindingEditor from './BindingEditor';
 
 export interface BindingPanelProps {
   functionInfo: ArmObj<FunctionInfo>;
-  functionAppId: string;
   bindingsConfig: BindingsConfig;
   bindingInfo?: BindingInfo;
   bindingDirection: BindingConfigDirection;
@@ -23,8 +22,15 @@ export interface BindingPanelProps {
 }
 
 const BindingPanel: React.SFC<BindingPanelProps> = props => {
-  const { functionInfo, functionAppId, bindingsConfig, bindingInfo, bindingDirection, isOpen, onPanelClose, onSubmit, onDelete } = props;
+  const { functionInfo, bindingsConfig, bindingInfo, bindingDirection, isOpen, onPanelClose, onSubmit, onDelete } = props;
   const { t } = useTranslation();
+
+  let functionAppId: string;
+  if (functionInfo) {
+    functionAppId = functionInfo.properties.function_app_id || functionInfo.id.split('/function')[0];
+  } else {
+    functionAppId = '';
+  }
 
   {
     return (

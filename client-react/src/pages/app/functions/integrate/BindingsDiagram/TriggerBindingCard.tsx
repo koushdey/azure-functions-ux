@@ -18,16 +18,19 @@ import { listStyle } from './BindingDiagram.styles';
 import { BindingFormBuilder } from '../../common/BindingFormBuilder';
 
 const TriggerBindingCard: React.SFC<BindingCardChildProps> = props => {
-  const { functionInfo, bindingsConfig } = props;
+  const { functionInfo, bindingsConfig, isLoading } = props;
   const { t } = useTranslation();
   const theme = useContext(ThemeContext);
   const portalCommunicator = useContext(PortalContext);
   const bindingEditorContext = useContext(BindingEditorContext) as BindingEditorContextInfo;
 
-  const trigger = getTrigger(functionInfo.properties.config.bindings);
-  const content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, trigger);
+  let content: JSX.Element = <></>;
+  if (!isLoading) {
+    const trigger = getTrigger(functionInfo.properties.config.bindings);
+    content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, trigger);
+  }
 
-  return <BindingCard title={t('trigger')} Svg={PowerSvg} content={content} {...props} />;
+  return <BindingCard title={t('trigger')} Svg={PowerSvg} content={content} shimmerProps={{ lines: 1 }} {...props} />;
 };
 
 const getTrigger = (bindings: BindingInfo[]): BindingInfo | undefined => {

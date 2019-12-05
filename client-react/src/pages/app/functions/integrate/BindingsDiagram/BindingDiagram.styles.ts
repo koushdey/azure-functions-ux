@@ -1,6 +1,7 @@
 import { ThemeExtended } from '../../../../../theme/SemanticColorsExtended';
 import { style } from 'typestyle';
 import { color } from 'csx';
+import { ITheme } from 'office-ui-fabric-react';
 
 export const cardStyle = (theme: ThemeExtended) => {
   return style({
@@ -47,11 +48,19 @@ export const listStyle = (theme: ThemeExtended): string => {
 
     $nest: {
       li: {
-        padding: '7px 18px',
+        paddingTop: '7px',
+        paddingLeft: '18px',
+        paddingRight: '18px',
       },
       '.emptyMessage': {
         color: theme.semanticColors.disabledBodyText,
       },
     },
+  });
+};
+
+export const shimmerStyle = (theme: ITheme): string => {
+  return style({
+    background: theme.palette.white,
   });
 };

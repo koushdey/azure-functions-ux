@@ -11,22 +11,50 @@ import { ThemeContext } from '../../../../../ThemeContext';
 import { ClosedReason } from '../BindingPanel/BindingEditor';
 import { BindingEditorContextInfo } from '../FunctionIntegrate';
 import { cardStyle, headerStyle } from './BindingDiagram.styles';
+import { Shimmer, IShimmerElement, ShimmerElementType, IShimmerColors } from 'office-ui-fabric-react';
 
 export interface BindingCardChildProps {
   functionInfo: ArmObj<FunctionInfo>;
   bindingsConfig: BindingsConfig;
+  isLoading: boolean;
 }
 
 export interface BindingCardProps extends BindingCardChildProps {
   title: string;
   Svg: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   content: JSX.Element;
+  isLoading: boolean;
+  shimmerProps: BindingCardShimmerProps;
+}
+
+export interface BindingCardShimmerProps {
+  lines: number;
 }
 
 const BindingCard: React.SFC<BindingCardProps> = props => {
-  const { title, Svg, content } = props;
-
+  const { title, Svg, content, isLoading, shimmerProps } = props;
   const theme = useContext(ThemeContext);
+
+  const shimmerElement: IShimmerElement[] = [
+    { type: ShimmerElementType.gap, width: '5%' },
+    { type: ShimmerElementType.line },
+    { type: ShimmerElementType.gap, width: '5%' },
+  ];
+
+  const shimmerColors: IShimmerColors = {
+    shimmer: theme.palette.neutralLight,
+    shimmerWave: theme.palette.neutralLighterAlt,
+    background: theme.palette.neutralLighter,
+  };
+
+  const extraShimmerLines: JSX.Element[] = [];
+  for (let index = 1; index < shimmerProps.lines; index = index + 1) {
+    extraShimmerLines.push(
+      <div key={`shimmer-${index}`} style={{ padding: '7px 0px' }}>
+        <Shimmer shimmerColors={shimmerColors} shimmerElements={shimmerElement} isDataLoaded={!isLoading} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -35,7 +63,11 @@ const BindingCard: React.SFC<BindingCardProps> = props => {
           <h3>{title}</h3>
           <Svg />
         </div>
-        {content}
+        {isLoading ? <div style={{ marginTop: '14px' }} /> : null}
+        <Shimmer shimmerColors={shimmerColors} shimmerElements={shimmerElement} isDataLoaded={!isLoading}>
+          {content}
+        </Shimmer>
+        {isLoading ? extraShimmerLines : null}
       </div>
     </>
   );

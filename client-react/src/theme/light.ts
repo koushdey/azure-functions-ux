@@ -68,6 +68,7 @@ const themePalette: IPalette = {
   accent: '#0078d4',
   white: '#ffffff',
   whiteTranslucent40: 'rgba(255,255,255,.4)',
+  yellowDark: '#9b870c',
   yellow: '#ffb900',
   yellowLight: '#fff100',
   orange: '#d83b01',
@@ -120,6 +121,7 @@ const semanticColors = {
   warningBackground: AzurePortalColors.warningBackground,
   warningHighlight: AzurePortalColors.warningIcon,
   successBackground: AzurePortalColors.successBackground,
+  successText: AzurePortalColors.inlineSuccessText,
 
   inputBorder: AzurePortalColors.textControlOutlineRest,
   inputBorderHovered: AzurePortalColors.textControlOutlineHovered,
@@ -261,7 +263,23 @@ const lightTheme: Partial<ThemeExtended> = {
       fontSize: '21px',
       fontWeight: 100,
     },
+    xLargePlus: {
+      fontFamily:
+        "'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif",
+      MozOsxFontSmoothing: 'grayscale',
+      WebkitFontSmoothing: 'antialiased',
+      fontSize: '21px',
+      fontWeight: 100,
+    },
     xxLarge: {
+      fontFamily:
+        "'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif",
+      MozOsxFontSmoothing: 'grayscale',
+      WebkitFontSmoothing: 'antialiased',
+      fontSize: '28px',
+      fontWeight: 100,
+    },
+    xxLargePlus: {
       fontFamily:
         "'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif",
       MozOsxFontSmoothing: 'grayscale',

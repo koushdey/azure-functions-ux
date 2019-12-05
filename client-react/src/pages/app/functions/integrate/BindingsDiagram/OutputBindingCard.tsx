@@ -18,16 +18,19 @@ import BindingCard, { BindingCardChildProps, createNew, editExisting, emptyList 
 import { listStyle } from './BindingDiagram.styles';
 
 const OutputBindingCard: React.SFC<BindingCardChildProps> = props => {
-  const { functionInfo, bindingsConfig } = props;
+  const { functionInfo, bindingsConfig, isLoading } = props;
   const { t } = useTranslation();
   const theme = useContext(ThemeContext);
   const portalCommunicator = useContext(PortalContext);
   const bindingEditorContext = useContext(BindingEditorContext) as BindingEditorContextInfo;
 
-  const outputs = getOutputBindings(functionInfo.properties.config.bindings);
-  const content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, outputs);
+  let content: JSX.Element = <></>;
+  if (!isLoading) {
+    const outputs = getOutputBindings(functionInfo.properties.config.bindings);
+    content = getContent(portalCommunicator, functionInfo, bindingsConfig, t, bindingEditorContext, theme, outputs);
+  }
 
-  return <BindingCard title={t('output')} Svg={OutputSvg} content={content} {...props} />;
+  return <BindingCard title={t('output')} Svg={OutputSvg} content={content} shimmerProps={{ lines: 2 }} {...props} />;
 };
 
 const getOutputBindings = (bindings: BindingInfo[]): BindingInfo[] => {

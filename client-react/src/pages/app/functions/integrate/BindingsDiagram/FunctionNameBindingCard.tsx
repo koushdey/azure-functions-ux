@@ -13,14 +13,14 @@ import { ArmObj } from '../../../../../models/arm-obj';
 import { FunctionInfo } from '../../../../../models/functions/function-info';
 
 const FunctionNameBindingCard: React.SFC<BindingCardChildProps> = props => {
-  const { functionInfo } = props;
+  const { functionInfo, isLoading } = props;
   const { t } = useTranslation();
   const theme = useContext(ThemeContext);
   const portalCommunicator = useContext(PortalContext);
 
-  const content = getContent(theme, functionInfo, portalCommunicator);
+  const content = isLoading ? <></> : getContent(theme, functionInfo, portalCommunicator);
 
-  return <BindingCard title={t('_function')} Svg={FunctionSvg} content={content} {...props} />;
+  return <BindingCard title={t('_function')} Svg={FunctionSvg} content={content} shimmerProps={{ lines: 1 }} {...props} />;
 };
 
 const getContent = (theme: ThemeExtended, functionInfo: ArmObj<FunctionInfo>, portalCommunicator: PortalCommunicator): JSX.Element => {
